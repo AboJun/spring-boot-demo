@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <!-- 应用名称-->
+    <property name="APP_NAME" value="hive-demo-service"/>
+    <property name="LOG_PATH" value="./logs" />
+
+    <!--默认日志目录与文件名-->
+    <property name="APPLICATION_LOG_FILE" value="${LOG_PATH}/${APP_NAME}" />
+
+    <!--默认日志文件配置-->
+    <appender name="APPLICATION"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APPLICATION_LOG_FILE}.log</file>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/history/${APP_NAME}.%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <maxFileSize>50MB</maxFileSize>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!--配置警情案件定时任务日志，文件名是stat.log-->
+    <appender name="STAT_JOB"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/stat.log</file>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/history/stat.%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <maxFileSize>50MB</maxFileSize>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+
+    <!--error日志文件配置，文件名是error.log-->
+    <appender name="ERROR"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>error</level>
+        </filter>
+        <file>${LOG_PATH}/error.log</file>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/history/error.%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <maxFileSize>50MB</maxFileSize>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!--继承异步打印类-->
+    <appender name="ASYNC_APPLICATION"
+              class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <appender-ref ref="APPLICATION"/>
+    </appender>
+
+    <appender name="ASYNC_ERROR"
+              class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <appender-ref ref="ERROR"/>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC_STAT_JOB"
+              class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <appender-ref ref="STAT_JOB"/>
+    </appender>
+
+    <logger name ="com.suntek.demo.job" level="debug" additivity="false">
+        <appender-ref ref="ASYNC_APPLICATION"/>
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ASYNC_ERROR"/>
+        <appender-ref ref="ASYNC_STAT_JOB"/>
+    </logger>
+
+
+    <!--指定包或者类到特定日志文件，定义日志级别-->
+    <logger name ="com.suntek" level="debug" additivity="false">
+        <appender-ref ref="ASYNC_APPLICATION"/>
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ASYNC_ERROR"/>
+    </logger>
+
+    <!--默认日志级别-->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ASYNC_APPLICATION" />
+        <appender-ref ref="ASYNC_ERROR"/>
+    </root>
+</configuration>

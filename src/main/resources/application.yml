@@ -1,0 +1,38 @@
+server:
+  port: 8080
+spring:
+  messages:
+    basename: message
+  datasource:
+    druid:
+      mycat:
+        name: videoweb
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://172.25.21.139:32066/videoweb?useUnicode=true&characterEncoding=utf8
+        username: videoweb
+        password: suntek
+      mysql:
+        name: videoweb
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://172.25.21.139:31503/videoweb?useUnicode=true&characterEncoding=utf8
+        username: videoweb
+        password: suntek
+      slave:
+        name: videoweb
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://172.25.21.139:31503/videoweb?useUnicode=true&characterEncoding=utf8
+        username: videoweb
+        password: suntek
+mybatis:
+  mapper-locations: classpath:mapper/*
+
+
+logging:
+  level:
+    org:
+      springframework: debug
+    com:
+      spring:
+        ibatis: debug
+
+
